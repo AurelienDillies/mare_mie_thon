@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Edit{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mt-4">Edit User profile</h1>
+        <div class="mt-4">
+            {% for message in app.flashes('warning') %}
+            <div class="alert alert-warning mt-4">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {{ form(form) }}
+        </div>
+    </div>
+{% endblock %}

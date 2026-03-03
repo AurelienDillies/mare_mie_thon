@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Marmiton - Ingredients{% endblock %}
+
+{% block body %}
+
+    {% if not ingredients.items is same as([]) %}
+
+        <h1>Ingredients</h1>
+
+        <a href="{{ path('app_ingredient_new') }}" class="btn btn-primary mb-3">Add New Ingredient</a>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="count">
+            There is {{ ingredients.getTotalItemCount }} ingredient{{ ingredients.getTotalItemCount > 1 ? 's' : '' }}
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                <th scope="col">id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+                <th scope="col">Show</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for ingredient in ingredients %}
+                    <tr>
+                        <td>{{ ingredient.id }}</td>
+                        <td>{{ ingredient.name }}</td>
+                        <td>{{ ingredient.price }}</td>
+                        <td>{{ ingredient.createdAt ? ingredient.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
+                        <td>
+                            <a href="{{ path('app_ingredient_edit', {id: ingredient.id}) }}" class="btn btn-info">Edit</a>
+                        </td>
+                        <td>
+                            <form method="post" action="{{ path('app_ingredient_delete', {id: ingredient.id}) }}" onsubmit="return confirm('Are you sure you want to delete this ingredient?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ingredient.id) }}">
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="{{ path('app_ingredient_show', {id: ingredient.id}) }}" class="btn btn-secondary">Show</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+        <div class="navigation d-flex justify-content-center">
+            {{ knp_pagination_render(ingredients) }}
+        </div>
+    {% else %}
+        <h4 class="alert alert-info" role="alert">
+            No ingredients found.
+        </h4>
+    {% endif %}
+
+
+{% endblock %}

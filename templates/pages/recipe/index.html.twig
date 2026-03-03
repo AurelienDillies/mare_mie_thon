@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Marmiton - Recipes{% endblock %}
+
+{% block body %}
+
+    {% if not recipes.items is same as([]) %}
+
+        <h1>Recipes</h1>
+
+        <a href="{{ path('app_recipe_new') }}" class="btn btn-primary mb-3">Add New Recipe</a>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="count">
+            There is {{ recipes.getTotalItemCount }} recipe{{ recipes.getTotalItemCount > 1 ? 's' : '' }}
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                <th scope="col">id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Time (min)</th>
+                <th scope="col">People</th>
+                <th scope="col">Difficulty</th>
+                <th scope="col">Price</th>
+                <th scope="col">Favorite</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+                <th scope="col">Show</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for recipe in recipes %}
+                    <tr>
+                        <td>{{ recipe.id }}</td>
+                        <td>{{ recipe.name }}</td>
+                        <td>{{ recipe.time }}</td>
+                        <td>{{ recipe.nbPeople ?? 'N/A' }}</td>
+                        <td>{{ recipe.difficulty ?? 'N/A' }}</td>
+                        <td>{{ recipe.price ?? 'N/A' }}</td>
+                        <td>{{ recipe.favorite ? 'Yes' : 'No' }}</td>
+                        <td>{{ recipe.createdAt ? recipe.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
+                        <td>
+                            <a href="{{ path('app_recipe_edit', {id: recipe.id}) }}" class="btn btn-info">Edit</a>
+                        </td>
+                        <td>
+                            <form method="post" action="{{ path('app_recipe_delete', {id: recipe.id}) }}" onsubmit="return confirm('Are you sure you want to delete this recipe?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ recipe.id) }}">
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="{{ path('app_recipe_show', {id: recipe.id}) }}" class="btn btn-secondary">Show</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+        <div class="navigation d-flex justify-content-center">
+            {{ knp_pagination_render(recipes) }}
+        </div>
+    {% else %}
+        <h4 class="alert alert-info" role="alert">
+            No recipes found.
+        </h4>
+    {% endif %}
+
+
+{% endblock %}
